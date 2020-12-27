@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app">
+		<h1>Belajar Vue Router</h1>
+
+		<!-- Pengganti tag <a href=""></a> -->
+		<router-link to="/">Home</router-link>
+		<router-link to="/about">About</router-link>
+		<router-link to="/categories">Categories</router-link>
+		<hr>
+
+		<!-- Untuk menampilkan komponen secara dinamis, sesuai dengan route yang diakses -->
+		<router-view></router-view>
+	</div>
+
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+	<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+	
+	<script type="module">
+
+		import { CategoriesComponent } from './CategoriesComponent.js'
+		import { CategoryComponent } from './CategoryComponent.js'
+
+		// Kita membuat 2 component yaitu, Home dan About
+		const Home = { template: '<div>Ini Halaman Home</div>' }
+		const About = { template: '<div>Ini Halaman About</div>' }
+
+		// Kemudian kita arahkan setiap route ke component yang kita inginkan
+		const routes = [
+			{ path: '/',			component: Home,	alias: '/home' },
+			{ path: '/about',	component: About, meta: { login: true } },
+			{ path: '/categories',	component: CategoriesComponent },
+			{ path: '/category/:id',	component: CategoryComponent },
+			{ path: '*',	redirect: '/' },
+		]
+
+		// Kemudian kita instansiasi object Vue Router dan tambahkan routes yang sudah kita buat tadi
+		const router = new VueRouter({
+			routes
+		})
+
+		router.beforeEach((to, from, next) => {
+			if(to.matched.some(record => record.meta.login)) {
+				let auth = false;
+				if(!auth) {
+					alert('Halaman ini hanya untuk user yang sudah login!')
+					next(false)
+				} else {
+					next()
+					alert('Berhasil Masuk')
+				}
+				// next(false)
+			} else {
+				next()
+			}
+		})
+
+		// Kemudian kita tambahkan object VueRouter yang kita namakan router ke object Vue
+		const app = new Vue({
+			router
+		}).$mount('#app')
+
+		
+
+	</script>
+
+	<!-- <script type="module"></script> -->
+
+</body>
+</html>
